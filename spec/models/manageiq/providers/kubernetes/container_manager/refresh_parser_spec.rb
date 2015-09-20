@@ -247,8 +247,8 @@ describe ManageIQ::Providers::Kubernetes::ContainerManager::RefreshParser do
       parsed_volumes = parser.send(:parse_volumes, example_volumes.collect { |ex| ex[:volume] })
 
       example_volumes.zip(parsed_volumes).each do |example, parsed|
-        parsed.should have_attributes(
-          :name                  => example[:name],
+        parsed[:name].should == example[:name]
+        parsed[:volume_source].should have_attributes(
           :git_repository        => example[:git_repository],
           :empty_dir_medium_type => example[:empty_dir_medium_type],
           :gce_pd_name           => example[:gce_pd_name],

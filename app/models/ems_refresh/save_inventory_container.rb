@@ -3,7 +3,8 @@ module EmsRefresh::SaveInventoryContainer
     target = ems if target.nil?
 
     child_keys = [:container_projects, :container_nodes, :container_image_registries, :container_images,
-                  :container_replicators, :container_groups, :container_services, :container_routes]
+                  :container_replicators, :container_groups, :container_services, :container_routes,
+                  :persistent_volumes]
 
     # Save and link other subsections
     child_keys.each do |k|
@@ -64,6 +65,21 @@ module EmsRefresh::SaveInventoryContainer
     save_inventory_multi(:container_nodes, ems, hashes, deletes, [:ems_ref],
                          [:labels, :computer_system, :container_conditions], [:namespace])
     store_ids_for_new_records(ems.container_nodes, hashes, :ems_ref)
+  end
+
+  def save_persistent_volumes_inventory(ems, hashes, target = nil)
+    return if hashes.nil?
+    target = ems if target.nil?
+
+    ems.persistent_volumes(true)
+    deletes = if target.kind_of?(ExtManagementSystem)
+                ems.persistent_volumes.dup
+              else
+                []
+              end
+
+    save_inventory_multi(:persistent_volumes, ems, hashes, deletes, [:ems_ref], [:volume_source], [:namespace])
+    store_ids_for_new_records(ems.persistent_volumes, hashes, :ems_ref)
   end
 
   def save_computer_system_inventory(container_node, hash, _target = nil)
@@ -262,8 +278,12 @@ module EmsRefresh::SaveInventoryContainer
                 []
               end
 
-    save_inventory_multi(:container_volumes, container_group, hashes, deletes, [:name])
+    save_inventory_multi(:container_volumes, container_group, hashes, deletes, [:name], [:volume_source])
     store_ids_for_new_records(container_group.container_volumes, hashes, :name)
+  end
+
+  def save_volume_source_inventory(container_volume, hash, _target = nil)
+    save_inventory_single(:volume_source, container_volume, hash)
   end
 
   def save_labels_inventory(entity, hashes, target = nil)
