@@ -57,7 +57,7 @@ module ContainerGroupHelper::TextualSummary
     h = {:labels => [_("Name"), _("Property"), _("Value")], :values => []}
     @record.container_volumes.each do |volume|
       volume_values = @@key_dictionary.collect do |key, name|
-        [nil, name, volume[key]] if volume[key].present?
+        [nil, name, volume.volume_source[key]] if volume.volume_source[key].present?
       end.compact
       # Set the volume name only  for the first item in the list
       volume_values[0][0] = volume.name if volume_values.length > 0

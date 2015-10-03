@@ -8,6 +8,7 @@ module ManageIQ::Providers
     has_many :container_projects, :foreign_key => :ems_id, :dependent => :destroy
     has_many :container_image_registries, :foreign_key => :ems_id, :dependent => :destroy
     has_many :container_images, :foreign_key => :ems_id, :dependent => :destroy
+    has_many :persistent_volumes, :foreign_key => :ems_id, :dependent => :destroy
 
     # required by aggregate_hardware
     def all_computer_system_ids
