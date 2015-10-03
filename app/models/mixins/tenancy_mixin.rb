@@ -13,6 +13,7 @@ module TenancyMixin
     def accessible_tenant_ids(user_or_group, strategy)
       tenant = user_or_group.try(:current_tenant)
       return [] unless tenant
+      return [] if tenant == Tenant.root_tenant
 
       tenant.accessible_tenant_ids(strategy)
     end
@@ -22,8 +23,7 @@ module TenancyMixin
     # In priority order
     self.tenant_id ||= owning_group_tenant ||
                        current_user_tenant ||
-                       ems_tenant          ||
-                       root_tenant
+                       ems_tenant || root_tenant
   end
 
   private
